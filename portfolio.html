@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Md. Aman | UI/UX & Technical Prototyper</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- GSAP Core & ScrollTrigger CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll CDN -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+        
+        html, body {
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f5f0eb; /* Premium Warm Oat-Beige Canvas Base */
+            color: #231c18; /* Luxurious Rich Espresso Deep Brown */
+            overflow-x: hidden;
+        }
+
+        html.lenis {
+            height: auto;
+        }
+        .lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        /* Horizontal Track Configuration */
+        .horizontal-container {
+            display: flex;
+            flex-wrap: nowrap;
+            width: 300vw;
+            will-change: transform;
+        }
+
+        .horizontal-panel {
+            width: 100vw;
+            height: 100vh;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Luxury Cream-Sand Glass Components */
+        .premium-glass {
+            background: linear-gradient(135deg, rgba(252, 251, 250, 0.85) 0%, rgba(240, 232, 224, 0.9) 100%);
+            border: 1px solid rgba(35, 28, 24, 0.08);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 45px -20px rgba(35, 28, 24, 0.08);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+        }
+
+        .premium-glass:hover {
+            border-color: #b08d70;
+            box-shadow: 0 25px 50px -20px rgba(176, 141, 112, 0.25);
+        }
+
+        /* Interactive Zoom Image Containers */
+        .gallery-zoom-target {
+            cursor: zoom-in;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(35, 28, 24, 0.08);
+            background: #faf7f4;
+            box-shadow: 0 20px 40px -15px rgba(35, 28, 24, 0.06);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+        .gallery-zoom-target:hover {
+            transform: translateY(-4px);
+            border-color: #b08d70;
+        }
+
+        /* Clean Cinematic Reveal Base States (No text splitting) */
+        .fx-reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+
+        .fx-reveal-right {
+            opacity: 0;
+            transform: translateX(-40px);
+            will-change: transform, opacity;
+        }
+
+        /* Lightbox Overlay */
+        #lightbox-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#b08d70]/30">
+
+    <!-- INTERACTIVE VIEWPORT LIGHTBOX MODAL CONTAINER -->
+    <div id="lightbox-overlay" class="fixed inset-0 bg-[#f5f0eb]/96 backdrop-blur-xl z-[100] flex items-center justify-center p-4 md:p-12" onclick="closeLightbox()">
+        <button class="fixed top-8 right-8 text-[11px] font-bold tracking-widest uppercase text-[#231c18] border-b border-[#231c18] pb-0.5 pointer-events-auto cursor-pointer hover:opacity-60 transition-opacity">Close View ✕</button>
+        <div class="max-w-6xl max-h-[85vh] overflow-hidden flex flex-col justify-center items-center">
+            <img id="lightbox-img" src="" alt="Expanded Preview Canvas" class="w-auto h-auto max-w-full max-h-[80vh] object-contain shadow-2xl border border-[#231c18]/5 bg-white p-2 md:p-4 rounded-xl transform scale-95 transition-transform duration-500 ease-out">
+            <p id="lightbox-caption" class="text-xs font-mono text-[#231c18]/60 mt-4 text-center tracking-wide uppercase"></p>
+        </div>
+    </div>
+
+    <!-- GLOBAL TOP SCROLL PROGRESS HUD -->
+    <div class="fixed top-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#b08d70] via-[#231c18] to-[#b08d70] z-[60] scale-x-0 origin-left progress-bar"></div>
+
+    <!-- NAVIGATION HEADER -->
+    <header class="fixed top-0 left-0 w-full border-b border-[#231c18]/5 bg-[#f5f0eb]/80 backdrop-blur-md z-50">
+        <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="font-extrabold text-xs tracking-[0.25em] text-[#231c18] hover:opacity-70 transition-opacity">MD. AMAN</a>
+            <nav class="flex items-center space-x-8 text-[11px] font-bold tracking-widest uppercase text-[#231c18]/40">
+                <a href="#hero" class="hover:text-[#231c18] transition-colors duration-300">Home</a>
+                <a href="#work-section" class="hover:text-[#231c18] transition-colors duration-300">Selected Work</a>
+                <a href="#certifications" class="hover:text-[#231c18] transition-colors duration-300">Credentials</a>
+                <a href="#contact" class="hover:text-[#231c18] transition-colors duration-300">Contact</a>
+                <a href="mailto:md.aman2993@gmail.com" class="text-[#231c18] border-b-2 border-[#b08d70] pb-0.5 hover:text-[#b08d70] transition-colors duration-300">Resume</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN SCROLLING CANVAS TRACK -->
+    <div id="viewport-wrapper" class="w-full relative z-10">
+        
+        <!-- SECTION 1: HERO VIEWPORT -->
+        <section id="hero" class="w-full h-screen flex flex-col justify-center relative px-6 md:px-24 overflow-hidden">
+            <div class="max-w-4xl relative z-10 space-y-8">
+                <!-- FIXED: Beautifully aligned clean text layers with modular reveal animations -->
+                <h1 class="text-4xl md:text-7xl font-black tracking-tight text-[#231c18] leading-[1.05] uppercase fx-reveal-up">
+                    UI/UX Engineer & <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#231c18] to-[#b08d70]">AI Assisted Developer</span>.
+                </h1>
+                <p class="text-[#231c18]/70 text-sm md:text-base max-w-2xl font-light leading-relaxed fx-reveal-up">
+                    Hi, I’m Aman. I combine user workflow analysis and Figma design systems with hardware and code integration. Currently completed my ECE degree at VTU and recently completed an internship designing features at Edutainer.
+                </p>
+                <div class="fx-reveal-up pt-2">
+                    <a href="#work-section" class="inline-block text-xs font-bold tracking-widest uppercase bg-[#231c18] text-[#f5f0eb] px-8 py-4 rounded-full hover:bg-[#382d27] transition-all shadow-md transform hover:-translate-y-0.5">
+                        Explore Index Track ↓
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: WIX-STYLE HORIZONTAL GRID SLIDER -->
+        <section id="work-section" class="relative w-full overflow-hidden border-y border-[#231c18]/5">
+            <div class="horizontal-container bg-[#ece5de]/20">
+                
+                <!-- PANEL A: GALERIE LOGO BLOCK -->
+                <div class="horizontal-panel px-6 md:px-24">
+                    <div class="max-w-4xl w-full grid md:grid-cols-5 gap-12 items-center">
+                        <div class="md:col-span-3 space-y-4 panel-reveal-group">
+                            <h2 class="text-3xl md:text-5xl font-black text-[#231c18] uppercase tracking-tight">Selected<br><span class="font-light text-[#b08d70]">Case Studies</span></h2>
+                            <p class="text-xs text-[#231c18]/50 font-light leading-relaxed max-w-sm">
+                                Use your mouse wheel or swipe left to navigate through core project interfaces interactively. Click images to expand.
+                            </p>
+                        </div>
+                        <div class="md:col-span-2 select-none pointer-events-none text-right hidden md:block">
+                            <div class="text-[8vw] font-black tracking-tighter text-[#231c18]/5 uppercase">WORKS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL B: CASE STUDY 1 (EDUTAINER) -->
+                <div class="horizontal-panel bg-[#f5f0eb] px-6 md:px-24 border-l border-[#231c18]/5">
+                    <div class="max-w-5xl w-full grid md:grid-cols-12 gap-12 items-center">
+                        <div class="md:col-span-5 space-y-6 panel-reveal-group">
+                            <span class="text-[9px] font-bold tracking-widest border border-[#b08d70]/40 text-[#231c18] px-3 py-1 rounded-full bg-[#b08d70]/10 uppercase w-fit block">UI/UX & Game Design Intern</span>
+                            <h3 class="text-2xl md:text-4xl font-black text-[#231c18] uppercase tracking-tight">Edutainer</h3>
+                            <p class="text-[#231c18]/70 text-xs md:text-sm leading-relaxed font-light">
+                                Designed scalable Figma component libraries to cut wireframe assembly cycles by 30%. Programmed fluid 3D player kinematic viewports and physics matrices natively inside Godot using custom GDScript layouts.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4 text-[10px] font-mono text-[#231c18]/60 pt-2 border-t border-[#231c18]/10">
+                                <div><span class="block text-[#b08d70] uppercase font-bold mb-0.5">Figma System</span> Design Component Architecture</div>
+                                <div><span class="block text-[#b08d70] uppercase font-bold mb-0.5">Godot Pipeline</span> Scripted Kinematics Loop</div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 relative group perspective-layer">
+                            <div class="gallery-zoom-target rounded-2xl p-4 panel-img-wrapper" onclick="openLightbox(this)" data-caption="Edutainer Master Component Architecture Layout Frame">
+                                <img src="assets/figma-edutainer.png" alt="Edutainer Master Framework UI Workspace" class="w-full rounded-xl opacity-95 transition-all duration-500 filter contrast-105 mix-blend-multiply">
+                                <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">CLICK TO VIEW</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL C: CASE STUDY 2 (CODEREV) -->
+                <div class="horizontal-panel bg-[#ece5de]/60 px-6 md:px-24 border-l border-[#231c18]/5">
+                    <div class="max-w-5xl w-full grid md:grid-cols-12 gap-12 items-center">
+                        <div class="md:col-span-5 space-y-6 panel-reveal-group">
+                            <span class="text-[9px] font-bold tracking-widest border border-neutral-400 text-neutral-700 px-3 py-1 rounded-full bg-neutral-100 uppercase w-fit block">AI Powered Code Editor</span>
+                            <h3 class="text-2xl md:text-4xl font-black text-[#231c18] uppercase tracking-tight">CodeRev Engine</h3>
+                            <p class="text-[#231c18]/70 text-xs md:text-sm leading-relaxed font-light">
+                                Directed development of a functional AI-assisted code editor supporting automated syntax error detection across 3+ 
+programming languages.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4 text-[10px] font-mono text-[#231c18]/60 pt-2 border-t border-[#231c18]/10">
+                                <div><span class="block text-neutral-600 uppercase font-bold mb-0.5">Tech Stack</span> JavaScript / Node.js</div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 relative group perspective-layer">
+                            <div class="gallery-zoom-target rounded-2xl p-4 panel-img-wrapper" onclick="openLightbox(this)" data-caption="CodeRev Live Multi-Panel Split Editor Workspace Client">
+                                <img src="assets/ai-editor-ui.png" alt="CodeRev AI Engine Code Workspace Interface Layout" class="w-full rounded-xl opacity-95 transition-all duration-500 filter contrast-105 mix-blend-multiply">
+                                <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">CLICK TO VIEW</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: DEEP DIVE EVIDENCE FLOW -->
+        <section class="w-full bg-[#f5f0eb] py-32 px-6 md:px-24 relative z-10">
+            <div class="max-w-4xl mx-auto space-y-32">
+                
+                <!-- EDUTAINER FIGMA WORKSPACE -->
+                <div class="grid md:grid-cols-12 gap-12 items-start deepdive-row">
+                    <div class="md:col-span-4 space-y-4 sticky top-28 text-block fx-reveal-right">
+                        <h4 class="text-xl font-black text-[#231c18] uppercase tracking-tight">Figma Component Infrastructure & Visual Layout Cleanups</h4>
+                        <p class="text-xs text-[#231c18]/70 leading-relaxed font-light">
+                            When building out layouts, I mapped asset wireframe system variants to eliminate user interface bottlenecks, restructuring mobile landing flows entirely for WCAG compliance constraints.
+                        </p>
+                    </div>
+                    <div class="md:col-span-8 space-y-8 group fx-reveal-up">
+                        <div class="gallery-zoom-target rounded-2xl p-4" onclick="openLightbox(this)" data-caption="Mobile Onboarding Interaction Screens & Vector Grids Template">
+                            <img src="assets/figma-screens.png" alt="Figma Mobile Screen Component Interaction Wireframes" class="w-full rounded-xl opacity-95 mix-blend-multiply">
+                            <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">CLICK TO VIEW</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GODOT VIEWPORT DEEP DIVE -->
+                <div class="grid md:grid-cols-12 gap-12 items-center border-t border-[#231c18]/5 pt-24 group deepdive-row">
+                    <div class="md:col-span-7 relative fx-reveal-right space-y-6">
+                        <div class="gallery-zoom-target rounded-2xl p-4" onclick="openLightbox(this)" data-caption="Godot 3D Engine Wireframe Grid Viewport Blockout Profile">
+                            <img src="assets/godot-env.png" alt="Godot 3D Primitive Blocking Grid Mesh Environment" class="w-full rounded-xl opacity-95 mix-blend-multiply">
+                            <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">CLICK TO VIEW</span>
+                        </div>
+                        <div class="gallery-zoom-target rounded-2xl p-4" onclick="openLightbox(this)" data-caption="Godot 3D Engine Gameplay Session Matrix View">
+                            <img src="assets/godot-gameplay.png" alt="Godot 3D Engine Live Interactive Gameplay Session" class="w-full rounded-xl opacity-95 mix-blend-multiply">
+                            <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">CLICK TO VIEW</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-5 space-y-4 text-block fx-reveal-up">
+                        <h4 class="text-xl font-black text-[#231c18] uppercase tracking-tight">Godot 3D Structural Viewport Blocking</h4>
+                        <p class="text-xs text-[#231c18]/70 leading-relaxed font-light">
+                            Assembled level map boundaries and spatial geometry vectors cleanly using simple primitive mesh elements, debugging clipping anomalies across custom level scenes.
+                        </p>
+                    </div>
+                </div>
+                        <div class="premium-glass p-8 rounded-2xl grid sm:grid-cols-2 gap-6 text-xs font-light leading-relaxed text-[#231c18]/70">
+                            <div>
+                                <h5 class="font-bold text-[#231c18] mb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#b08d70]"></span> Kinematics Loops</h5>
+                                Programmed multi-directional input matrices cleanly, alongside a custom script-based First-Person Perspective (FPP) camera setup featuring integrated vector-following transitions.
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-[#231c18] mb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#b08d70]"></span> Spatial Interactions</h5>
+                                Modeled clean blocking test-environments directly out of 3D primitive nodes to verify design system scale limitations, while configuring rigid physics layers and masks to isolate interaction spaces.
+                            </div>
+                        </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: THE CERTIFICATIONS FLOW -->
+        <section id="certifications" class="w-full py-32 bg-[#ece5de]/60 border-t border-[#231c18]/5 px-6 md:px-24 relative z-10">
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-16 cert-header fx-reveal-up">
+                    <h2 class="text-2xl md:text-3xl font-black text-[#231c18] uppercase">Verified <span class="font-light text-[#b08d70]">Certifications</span></h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- CERTIFICATE CARD 1 -->
+                    <div class="premium-glass rounded-2xl overflow-hidden group transition-all duration-300 cert-card fx-reveal-up">
+                        <div class="aspect-video bg-white overflow-hidden border-b border-[#231c18]/5 relative cursor-zoom-in" onclick="openLightbox(this.querySelector('img'), true)" data-caption="Cisco Networking Academy - Data Science Verification Credentials">
+                            <img src="assets/cert-data-science.png" alt="Introduction to Data Science Certificate - Cisco Networking Academy" class="w-full h-full object-cover opacity-85 group-hover:scale-101 transition-transform duration-500 mix-blend-multiply">
+                            <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">EXPAND CREDENTIAL</span>
+                        </div>
+                        <div class="p-8">
+                            <span class="text-[9px] font-mono text-[#b08d70] tracking-widest uppercase font-semibold">Cisco Networking Academy</span>
+                            <h3 class="text-lg font-bold text-[#231c18] mt-2 mb-1">Introduction to Data Science</h3>
+                            <p class="text-xs text-[#231c18]/60 font-light leading-relaxed">Verified foundation in exploratory data analysis, data collection principles, and foundational analytical workflows.</p>
+                        </div>
+                    </div>
+
+                    <!-- CERTIFICATE CARD 2 -->
+                    <div class="premium-glass rounded-2xl overflow-hidden group transition-all duration-300 cert-card fx-reveal-up">
+                        <div class="aspect-video bg-white overflow-hidden border-b border-[#231c18]/5 relative cursor-zoom-in" onclick="openLightbox(this.querySelector('img'), true)" data-caption="Cisco Networking Academy - Modern AI Verification Credentials">
+                            <img src="assets/cert-modern-ai.png" alt="Introduction to Modern AI Certificate - Cisco Networking Academy" class="w-full h-full object-cover opacity-85 group-hover:scale-101 transition-transform duration-500 mix-blend-multiply">
+                            <span class="absolute bottom-4 right-4 bg-[#231c18]/80 text-[#f5f0eb] text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">EXPAND CREDENTIAL</span>
+                        </div>
+                        <div class="p-8">
+                            <span class="text-[9px] font-mono text-[#b08d70] tracking-widest uppercase font-semibold">Cisco Networking Academy</span>
+                            <h3 class="text-lg font-bold text-[#1e1916] mt-2 mb-1">Introduction to Modern AI</h3>
+                            <p class="text-xs text-[#1e1916]/60 font-light leading-relaxed">Core conceptual training covering modern LLM behaviors, machine learning fundamentals, and smart systems integration.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: GLOBAL CONTACT BLOCK -->
+        <section id="contact" class="w-full py-40 bg-[#f5f0eb] border-t border-[#231c18]/5 text-center relative z-10">
+            <div class="max-w-2xl mx-auto px-6 space-y-8 contact-box fx-reveal-up">
+                <h2 class="text-4xl font-black uppercase tracking-tight text-[#231c18]">Let's Collaborate</h2>
+                <p class="text-xs md:text-sm text-[#231c18]/60 font-light max-w-sm mx-auto leading-relaxed">
+                    Open for placement vectors across professional UI/UX Design and technical developer pipelines. Drop an inquiry block directly.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6 pt-4">
+                    <a href="mailto:md.aman2993@gmail.com" class="text-xs font-bold tracking-widest uppercase bg-[#231c18] text-[#f5f0eb] px-8 py-5 rounded-full hover:bg-[#382d27] transition-all duration-300 w-full sm:w-auto shadow-xl">
+                        md.aman2993@gmail.com ↗
+                    </a>
+                    <a href="https://linkedin.com/in/md-aman-8b610a384" target="_blank" class="text-xs font-bold tracking-widest uppercase border border-[#231c18]/10 text-[#231c18] px-8 py-5 rounded-full hover:bg-[#231c18] hover:text-[#f5f0eb] transition-all duration-300 w-full sm:w-auto">
+                        LinkedIn ↗
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER BAR -->
+        <footer class="border-t border-[#231c18]/5 bg-[#ece5de]/60 text-center py-12 text-[10px] font-mono text-[#231c18]/40 relative z-10">
+            <p>© 2026 Md. Aman M. Dharwad.</p>
+        </footer>
+    </div>
+
+    <!-- ADVANCED CORE CONTROLLER SCRIPT -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Lenis Smooth Scroll Setup
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true
+        });
+
+        function rafEngine(time) {
+            lenis.raf(time);
+            requestAnimationFrame(rafEngine);
+        }
+        requestAnimationFrame(rafEngine);
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+
+        // Lightroom Modal Engine Logic
+        const overlay = document.getElementById("lightbox-overlay");
+        const lightboxImg = document.getElementById("lightbox-img");
+        const lightboxCaption = document.getElementById("lightbox-caption");
+
+        window.openLightbox = function(element, isCertClick = false) {
+            lenis.stop();
+            let targetImg = isCertClick ? element : element.querySelector("img");
+            let captionText = isCertClick ? element.parentElement.getAttribute("data-caption") : element.getAttribute("data-caption");
+            lightboxImg.src = targetImg.src;
+            lightboxCaption.innerText = captionText || "PROJECT ARCHITECTURE";
+            overlay.classList.add("active");
+            setTimeout(() => { lightboxImg.style.transform = "scale(1)"; }, 50);
+        };
+
+        window.closeLightbox = function() {
+            lightboxImg.style.transform = "scale(0.95)";
+            overlay.classList.remove("active");
+            lenis.start();
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. HERO REVEAL: Premium clean fade up stagger
+            gsap.to("#hero .fx-reveal-up", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.15,
+                ease: "power3.out"
+            });
+
+            // 2. HORIZONTAL PINNING GRID MATRIX
+            const horizontalTrack = document.querySelector(".horizontal-container");
+            if(horizontalTrack) {
+                let scrollTween = gsap.to(horizontalTrack, {
+                    x: () => -(horizontalTrack.scrollWidth - window.innerWidth),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#work-section",
+                        pin: true,
+                        scrub: 1,
+                        start: "top top",
+                        end: () => "+=" + (horizontalTrack.scrollWidth - window.innerWidth),
+                        invalidateOnRefresh: true
+                    }
+                });
+
+                // Animate text groups as panels transition horizontally
+                document.querySelectorAll(".panel-reveal-group").forEach(group => {
+                    gsap.fromTo(group, 
+                        { opacity: 0, y: 30 },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.6,
+                            ease: "power2.out",
+                            scrollTrigger: {
+                                trigger: group,
+                                containerAnimation: scrollTween,
+                                start: "left 85%",
+                                toggleActions: "play none none none"
+                            }
+                        }
+                    );
+                });
+            }
+
+            // 3. VERTICAL SECTIONS REVEALS: Smooth scrolling viewport entries
+            gsap.utils.toArray(".fx-reveal-up").forEach(el => {
+                // Ignore the hero section element since it fires immediately
+                if(el.closest("#hero")) return;
+                
+                gsap.fromTo(el, 
+                    { opacity: 0, y: 40 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%",
+                            toggleActions: "play none none none"
+                        }
+                    }
+                );
+            });
+
+            gsap.utils.toArray(".fx-reveal-right").forEach(el => {
+                gsap.fromTo(el, 
+                    { opacity: 0, x: -30 },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        duration: 0.8,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%",
+                            toggleActions: "play none none none"
+                        }
+                    }
+                );
+            });
+
+            // Global Progress HUD Controller
+            gsap.to(".progress-bar", {
+                scaleX: 1,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: true
+                }
+            });
+
+            // 3D Card Interactive Mouse Matrix Shifts
+            if(window.innerWidth > 768) {
+                document.querySelectorAll(".perspective-layer").forEach(layer => {
+                    const imgContainer = layer.querySelector(".panel-img-wrapper");
+                    
+                    layer.addEventListener("mousemove", e => {
+                        const boundRect = layer.getBoundingClientRect();
+                        const mouseOffsetX = e.clientX - boundRect.left - (boundRect.width / 2);
+                        const mouseOffsetY = e.clientY - boundRect.top - (boundRect.height / 2);
+                        
+                        gsap.to(imgContainer, {
+                            duration: 0.3,
+                            rotateX: -(mouseOffsetY / boundRect.height) * 12,
+                            rotateY: (mouseOffsetX / boundRect.width) * 12,
+                            ease: "power2.out",
+                            transformPerspective: 1200
+                        });
+                    });
+
+                    layer.addEventListener("mouseleave", () => {
+                        gsap.to(imgContainer, { duration: 0.5, rotateX: 0, rotateY: 0, ease: "power3.out" });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
